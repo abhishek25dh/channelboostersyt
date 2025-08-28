@@ -334,7 +334,7 @@ export default function App() {
     const [selectedChannel, setSelectedChannel] = useState(null);
 
     useEffect(() => {
-        document.body.style.backgroundColor = '#111827';
+        document.body.style.backgroundColor = '#111826';
     }, []);
 
     const handleLogin = () => setIsAuthenticated(true);
