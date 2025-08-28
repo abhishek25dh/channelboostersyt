@@ -1,23 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { AreaChart, Area, CartesianGrid, Tooltip, ResponsiveContainer, XAxis, YAxis } from 'recharts';
 import { User, Mail, DollarSign, ArrowLeft, Youtube, LogIn, Lock } from 'lucide-react';
 
 // --- ANALYTICS DATA GENERATION ---
 
 // Helper to create daily data points for a month
-const generateMonthlyData = (days, startValue, gain, namePrefix) => 
+const generateMonthlyData = (days: number, startValue: number, gain: number, namePrefix: string) => 
     Array.from({ length: days }, (_, i) => ({ 
         name: `${namePrefix} D${i + 1}`, 
         value: startValue + Math.floor(i * (gain / days)) 
     }));
 
-const generateMonthlyViewData = (days, totalViews, namePrefix) =>
+const generateMonthlyViewData = (days: number, totalViews: number, namePrefix: string) =>
     Array.from({ length: days }, (_, i) => ({
         name: `${namePrefix} D${i + 1}`,
         value: Math.floor(totalViews / days) + (Math.random() - 0.5) * (totalViews / days / 5) // with 20% variance
     }));
     
-const generateMonthlyRevenueData = (days, totalViews, namePrefix) =>
+const generateMonthlyRevenueData = (days: number, totalViews: number, namePrefix: string) =>
     Array.from({ length: days }, (_, i) => ({
         name: `${namePrefix} D${i + 1}`,
         value: ((totalViews / days) / 1000 * 0.15) + (Math.random() - 0.5) * 2
@@ -126,7 +126,7 @@ const kaiGuyVideos = {
         { id: 'kg_short_14', title: 'EXTREME Spam Challenge In Geometry Dash!', views: 544000, likes: 14000 },
         { id: 'kg_short_15', title: '🏆Level 1 To Level 10 In Geometry Dash!🏆', views: 415000, likes: 7600 },
         { id: 'kg_short_16', title: 'Geometry Dash Increasing Difficulty (Shh🤫)', views: 493000, likes: 11000 },
-        { id: 'kg_short_17', title: 'I Failed This Geometry Dash Quiz 😭�😭', views: 619000, likes: 9400 },
+        { id: 'kg_short_17', title: 'I Failed This Geometry Dash Quiz 😭😭😭', views: 619000, likes: 9400 },
         { id: 'kg_short_18', title: 'Cheater vs Spam Trap for $10k 🐀', views: 201000, likes: 2600 },
         { id: 'kg_short_19', title: 'Hacker vs Spam Challenge 🎯', views: 139000, likes: 1800 },
         { id: 'kg_short_20', title: 'this has to be a joke 💀', views: 836000, likes: 19000 },
@@ -141,13 +141,13 @@ const footballTimeVideos = {
 };
 
 // --- HELPER COMPONENTS ---
-const formatNumber = (num) => {
+const formatNumber = (num: number) => {
     if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
     if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
     return num.toLocaleString();
 };
 
-const CustomTooltip = ({ active, payload, label }) => {
+const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     return (<div className="p-2 bg-gray-800 text-white rounded-lg shadow-lg border border-gray-700"><p className="label">{`${label} : ${formatNumber(payload[0].value)}`}</p></div>);
   }
@@ -155,12 +155,12 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 // --- PAGE COMPONENTS ---
-function LoginPage({ onLogin }) {
+function LoginPage({ onLogin }: { onLogin: () => void }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
-    const handleSubmit = (e) => {
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (email === 'Francisfleg18@gmail.com' && password === 'francis18947') {
             setError('');
@@ -194,7 +194,7 @@ function LoginPage({ onLogin }) {
     );
 }
 
-function DashboardPage({ onSelectChannel, onLogout }) {
+function DashboardPage({ onSelectChannel, onLogout }: { onSelectChannel: (channel: any) => void, onLogout: () => void }) {
     return (
         <><Header onLogout={onLogout} />
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -226,7 +226,7 @@ function DashboardPage({ onSelectChannel, onLogout }) {
     );
 }
 
-function ChannelDetails({ channel, onBack }) {
+function ChannelDetails({ channel, onBack }: { channel: any, onBack: () => void }) {
     const [timeframe, setTimeframe] = useState('30d');
     const [videoType, setVideoType] = useState(channel.hasLongVideos ? 'long' : 'shorts');
     const [ownerEmail, setOwnerEmail] = useState('');
@@ -234,7 +234,7 @@ function ChannelDetails({ channel, onBack }) {
     
     const analyticsData = channel.id === 1 ? kaiGuySpecificAnalytics : footballTimeSpecificAnalytics;
     const videoData = channel.id === 1 ? kaiGuyVideos : footballTimeVideos;
-    const data = analyticsData[timeframe] || analyticsData['30d'];
+    const data = analyticsData[timeframe as keyof typeof analyticsData] || analyticsData['30d'];
 
     const handlePayNow = () => {
         if (ownerEmail.includes('@') && ownerEmail.includes('.')) {
@@ -269,9 +269,9 @@ function ChannelDetails({ channel, onBack }) {
                                 <div key={metric} className="bg-gray-800 p-4 rounded-xl shadow-lg">
                                     <h3 className="text-xl font-semibold mb-4 capitalize">{metric} Trend</h3>
                                     <ResponsiveContainer width="100%" height={300}>
-                                        <AreaChart data={data[metric]} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+                                        <AreaChart data={data[metric as keyof typeof data]} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
                                             <defs><linearGradient id={`color${metric}`} x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor={metric === 'subscribers' ? '#3b82f6' : metric === 'views' ? '#8b5cf6' : '#22c55e'} stopOpacity={0.8}/><stop offset="95%" stopColor={metric === 'subscribers' ? '#3b82f6' : metric === 'views' ? '#8b5cf6' : '#22c55e'} stopOpacity={0}/></linearGradient></defs>
-                                            <CartesianGrid strokeDasharray="3 3" stroke="#4a5568" /><XAxis dataKey="name" stroke="#a0aec0" tick={{fontSize: 10}} interval={data[metric] && data[metric].length > 100 ? 30 : 5} /><YAxis stroke="#a0aec0" tickFormatter={formatNumber} tick={{fontSize: 12}} /><Tooltip content={<CustomTooltip />} /><Area type="monotone" dataKey="value" stroke={metric === 'subscribers' ? '#3b82f6' : metric === 'views' ? '#8b5cf6' : '#22c55e'} fillOpacity={1} fill={`url(#color${metric})`} />
+                                            <CartesianGrid strokeDasharray="3 3" stroke="#4a5568" /><XAxis dataKey="name" stroke="#a0aec0" tick={{fontSize: 10}} interval={data[metric as keyof typeof data] && data[metric as keyof typeof data].length > 100 ? 30 : 5} /><YAxis stroke="#a0aec0" tickFormatter={formatNumber} tick={{fontSize: 12}} /><Tooltip content={<CustomTooltip />} /><Area type="monotone" dataKey="value" stroke={metric === 'subscribers' ? '#3b82f6' : metric === 'views' ? '#8b5cf6' : '#22c55e'} fillOpacity={1} fill={`url(#color${metric})`} />
                                         </AreaChart>
                                     </ResponsiveContainer>
                                 </div>
@@ -285,7 +285,7 @@ function ChannelDetails({ channel, onBack }) {
                                     <button onClick={() => setVideoType('shorts')} className={`py-2 px-4 font-semibold ${videoType === 'shorts' ? 'text-blue-400 border-b-2 border-blue-400' : 'text-gray-400'}`}>Shorts</button>
                                 </div>
                             )}
-                            <div className="overflow-x-auto"><table className="w-full text-left"><thead className="text-xs text-gray-400 uppercase"><tr><th className="p-2">Video</th><th className="p-2 text-right">Views</th><th className="p-2 text-right">Likes</th><th className="p-2 text-right">Revenue</th></tr></thead><tbody>{videoData[videoType].map(video => (<tr key={video.id} className="border-b border-gray-700 hover:bg-gray-700/50"><td className="p-2 flex items-center"><img src={video.thumbnailUrl} alt={video.title} className="w-16 h-12 object-cover rounded-md mr-4" /><span className="font-medium truncate max-w-xs">{video.title}</span></td><td className="p-2 text-right">{formatNumber(video.views)}</td><td className="p-2 text-right">{formatNumber(video.likes)}</td><td className="p-2 text-right text-green-400">${video.revenue}</td></tr>))}</tbody></table></div>
+                            <div className="overflow-x-auto"><table className="w-full text-left"><thead className="text-xs text-gray-400 uppercase"><tr><th className="p-2">Video</th><th className="p-2 text-right">Views</th><th className="p-2 text-right">Likes</th><th className="p-2 text-right">Revenue</th></tr></thead><tbody>{videoData[videoType as keyof typeof videoData].map(video => (<tr key={video.id} className="border-b border-gray-700 hover:bg-gray-700/50"><td className="p-2 flex items-center"><img src={video.thumbnailUrl} alt={video.title} className="w-16 h-12 object-cover rounded-md mr-4" /><span className="font-medium truncate max-w-xs">{video.title}</span></td><td className="p-2 text-right">{formatNumber(video.views)}</td><td className="p-2 text-right">{formatNumber(video.likes)}</td><td className="p-2 text-right text-green-400">${video.revenue}</td></tr>))}</tbody></table></div>
                         </div>
                     </div>
                     <div className="w-full lg:w-1/3"><div className="sticky top-24 space-y-6">
@@ -314,7 +314,7 @@ function ChannelDetails({ channel, onBack }) {
     );
 }
 
-function Header({ onBack, onLogout, isDetailsPage }) {
+function Header({ onBack, onLogout, isDetailsPage }: { onBack?: () => void, onLogout?: () => void, isDetailsPage?: boolean }) {
     return (
         <header className="bg-gray-900 text-white shadow-md sticky top-0 z-50 border-b border-gray-800">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -331,15 +331,15 @@ function Header({ onBack, onLogout, isDetailsPage }) {
 
 export default function App() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [selectedChannel, setSelectedChannel] = useState(null);
+    const [selectedChannel, setSelectedChannel] = useState<any | null>(null);
 
     useEffect(() => {
-        document.body.style.backgroundColor = '#111826';
+        document.body.style.backgroundColor = '#111827';
     }, []);
 
     const handleLogin = () => setIsAuthenticated(true);
     const handleLogout = () => setIsAuthenticated(false);
-    const handleSelectChannel = (channel) => setSelectedChannel(channel);
+    const handleSelectChannel = (channel: any) => setSelectedChannel(channel);
     const handleBackToDashboard = () => setSelectedChannel(null);
 
     if (!isAuthenticated) {
