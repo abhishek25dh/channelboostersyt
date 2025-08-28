@@ -158,16 +158,11 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 function LoginPage({ onLogin }: { onLogin: () => void }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (email === 'Francisfleg18@gmail.com' && password === 'francis18947') {
-            setError('');
-            onLogin();
-        } else {
-            setError('Invalid email or password.');
-        }
+        // Log in regardless of email or password, as long as fields are not empty
+        onLogin();
     };
 
     return (
@@ -186,7 +181,6 @@ function LoginPage({ onLogin }: { onLogin: () => void }) {
                         <label className="text-sm font-bold text-gray-300 block mb-2">Password</label>
                         <div className="relative"><Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} /><input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full bg-gray-700 border border-gray-600 rounded-lg py-2 pl-10 pr-4 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="••••••••" required /></div>
                     </div>
-                    {error && <p className="text-red-400 text-sm text-center">{error}</p>}
                     <div><button type="submit" className="w-full flex justify-center items-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors shadow-lg"><LogIn size={20} className="mr-2" />Sign In</button></div>
                 </form>
             </div>
